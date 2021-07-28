@@ -45,19 +45,33 @@
                         管理后台登录
                     </div>
                 </h2>
-                <form class="ui large form" method="post" action="#" th:action="@{/admin/login}">
+                <form class="ui large form" method="post" action="#" th:action="@{/admin/login}"
+                      onsubmit="return checkForm()">
                     <!--提交到admin下面的login方法-->
                     <div class="ui segment" style="background-color: #fff0;border: none">
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="user icon"></i>
-                                <input type="text" name="username" placeholder="请输入用户名">
+                                <input type="text" name="username" placeholder="enter username">
                             </div>
                         </div>
                         <div class="field">
                             <div class="ui left icon input">
                                 <i class="lock icon"></i>
                                 <input type="password" name="password" placeholder="password">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="verificationCode" style="width: 60%" name="verificationCode"
+                                       class="verificationCode" placeholder="enter the code">
+                                <input type="button" id="code" value="idfe"
+                                       style="width: 25%;margin-left: 15px; text-align: center"
+                                       onclick="changeCode()"></input>
+                            </div>
+                            <div class="ui left icon input">
+
                             </div>
                         </div>
                         <button class="ui fluid large teal submit button">登录</button>
@@ -77,9 +91,16 @@
 <!--/*/<th:block th:relpace="_fragments :: script">/*/-->
 <script src="https://cdn.bootcss.com/jquery/3.2.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="../static/jsUtils/messageUtils.js" th:src="@{/jsUtils/messageUtils.js}"></script>
+<script src="../static/js/canvas_demo.js" th:src="@{/js/canvas_demo.js}"></script>
 <!--/*/</th:block>/*/-->
 
 <script>
+    $(function () {
+        changeCode();
+        getCanvas();
+    })
+
     $('.ui.form').form({
         fields: {
             username: {
@@ -98,6 +119,32 @@
             }
         }
     })
+
+    function changeCode() {
+        let codes = "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D," +
+            "E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,1,2,3,4,5,6,7,8,9";
+        let codeArray = [];
+        codeArray.push(codes.split(','));
+        let code = '';
+        for (let i = 0; i < 4; i++) {
+            let index = Math.floor(60 * Math.random());
+            value = codeArray[0][index];
+            code += value
+        }
+        $('#code').val(code);
+    }
+
+    function checkForm() {
+        let verificationCode = $('.verificationCode').val().toLowerCase();
+        let code = $('#code').val().toLowerCase();
+        if (verificationCode == code) {
+            return true;
+        } else {
+            getMessage("warning", "验证码输入有误");
+            changeCode();
+            return false;
+        }
+    }
 </script>
 
 </body>
