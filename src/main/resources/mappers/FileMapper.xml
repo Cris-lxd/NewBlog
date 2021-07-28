@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxd.mapper.FileMapper">
+    <resultMap type="Integer" id="countAdminResultMap">
+        <result column="count" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+    <resultMap type="java.util.Map" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="path" property="path"/>
+        <result column="real_name" property="real_name"/>
+        <result column="size" property="size"/>
+    </resultMap>
+
+
+    <select id="getUserId" parameterType="java.lang.String" resultType="java.lang.Long">
+        select id
+        from t_user
+        where username = #{username}
+    </select>
+
+    <insert id="insertByFileName" parameterType="java.util.Map">
+        insert into t_file(name, real_name, path, user_id, size)
+        values ( #{name,jdbcType=VARCHAR}
+               , #{realName,jdbcType=VARCHAR}
+               , #{path,jdbcType=VARCHAR}
+               , #{user_id,jdbcType=BIGINT}
+               , #{size,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectAll" resultType="java.util.Map">
+        select *
+        from t_file
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select name
+        from t_file
+        where id = #{id}
+    </select>
+
+    <delete id="DeleteById" parameterType="java.lang.Long">
+        delete
+        from t_file
+        where id = #{id}
+    </delete>
+
+    <!--    <select id="selectPage" parameterType="java.lang.String" resultType="java.util.Map">-->
+    <!--        select * from t_file limit ${fromIndex},#{endIndex}-->
+    <!--    </select>-->
+
+    <select id="selectPage" resultMap="BaseResultMap, countAdminResultMap" parameterType="java.lang.String">
+        select sql_calc_found_rows id, name, path, real_name, size
+        from t_file
+        where 1 = 1
+            limit ${fromIndex}
+            , ${endIndex};
+        SELECT count(*) as count
+        from t_file;
+    </select>
+
+    <select id="selectByText" parameterType="java.lang.String" resultType="java.util.Map">
+        select *
+        from t_file
+        where name like concat('%', #{text}, '%')
+    </select>
+</mapper>
+
+        <!--<include refid="Base_If_Condition" />-->
