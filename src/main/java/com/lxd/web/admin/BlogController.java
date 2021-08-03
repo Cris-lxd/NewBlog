@@ -7,6 +7,7 @@ import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.TagService;
 import com.lxd.service.TypeService;
+import com.lxd.util.CurrentUser;
 import com.lxd.vo.BlogQuery;
 import org.hibernate.query.criteria.internal.predicate.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,7 @@ public class BlogController {
      *
      * */
     public String blogs(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-                        BlogQuery blog, Model model) {
-
+                        BlogQuery blog, Model model, @CurrentUser User user) {
         model.addAttribute("types", typeService.listType());
         model.addAttribute("page", blogService.listBlog(pageable, blog));    //查询page对象放到model模型里面
         model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));

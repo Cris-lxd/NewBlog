@@ -1,12 +1,15 @@
 package com.lxd.interceptor;
 
+import com.lxd.util.CurrentUserMethodArgumentResolver;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Cris on 2020/3/24
@@ -20,7 +23,8 @@ public class WebConfig implements WebMvcConfigurer {      //采用JavaBean的形
         registry.addInterceptor(new Logininterceptor())
                 .addPathPatterns("/admin/**")      //加过滤的路径
                 .excludePathPatterns("/admin")      //添加排除的文件
-                .excludePathPatterns("/admin/login");
+                .excludePathPatterns("/admin/login")
+                .excludePathPatterns("/admin/register");
     }
 
     @Override
@@ -33,5 +37,12 @@ public class WebConfig implements WebMvcConfigurer {      //采用JavaBean的形
         String path1 = "path";//System.getProperty("user.dir") + "\\src\\main\\webapp\\uptextimg\\";
         registry.addResourceHandler("/static/img/**").addResourceLocations("file:" + path);
         WebMvcConfigurer.super.addResourceHandlers(registry);
+    }
+
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        WebMvcConfigurer.super.addArgumentResolvers(argumentResolvers);
+        argumentResolvers.add(new CurrentUserMethodArgumentResolver());
     }
 }

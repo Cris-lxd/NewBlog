@@ -1,5 +1,6 @@
 package com.lxd.po;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.xml.internal.ws.spi.db.DatabindingException;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity(name = "t_user")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nickname;
     private String username;

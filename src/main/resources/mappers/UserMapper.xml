@@ -3,6 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lxd.mapper.UserMapper">
+    <insert id="addUser" parameterType="com.lxd.po.User">
+        insert into t_user(id,username,password,email,creat_time) values(#{id},#{username},#{password},#{email},#{creatTime})
+    </insert>
 
     <select id="findA" resultType="java.util.Map">
         select t2.name, count(t1.id) as count

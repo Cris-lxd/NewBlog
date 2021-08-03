@@ -3,6 +3,7 @@ package com.lxd.mapper;/*
  *  2020/9/8
  * */
 
+import com.lxd.po.User;
 import org.apache.ibatis.annotations.MapKey;
 import org.springframework.stereotype.Component;
 
@@ -18,4 +19,6 @@ public interface UserMapper {
      */
     @MapKey("id")
     public List<Map<String, String>> findA();
+
+    int addUser(User user);
 }

@@ -7,15 +7,15 @@ import com.lxd.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Cris on 2020/3/23
@@ -70,5 +70,31 @@ public class LoginController {
     public String toAdmin(HttpServletRequest request) {
         request.getSession().removeAttribute("user");
         return "admin/login";
+    }
+
+    /**
+     * 注册
+     * @param username
+     * @param password
+     * @param invitedCode
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/register")
+    public String register(String username, String password,String email,String invitedCode) throws ParseException {
+        if(!"5208".equals(invitedCode)){
+            return "请输入正确邀请码";
+        }
+        User user = new User();
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+        Long id = Long.valueOf(sdf.format(new Date()));
+        user.setId(id);
+        user.setUsername(username);
+        user.setPassword(MD5Utils.code(password));
+        user.setEmail(email);
+        user.setCreatTime(new Date());
+        int i = userService.addUser(user);
+        String res = i == 1 ? "注册成功" : "注册失败";
+        return res;
     }
 }

@@ -125,6 +125,11 @@ public class ToController {
         return "admin/login";
     }
 
+    @RequestMapping("/toRegister")
+    public String toRegister() {
+        return "admin/register";
+    }
+
     /**
      * 根据typeid获取对应blogs
      */

@@ -1,6 +1,7 @@
 package com.lxd.service;
 
 import com.lxd.dao.UserRepository;
+import com.lxd.mapper.UserMapper;
 import com.lxd.po.User;
 import com.lxd.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,18 @@ public class UserServiceImpl implements UserService {
 
     @Autowired   //自动注入
     private UserRepository userRepository;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public User checkUser(String username, String password) {
         //User user=userRepository.findByUsernameAndPassword(username,MD5Utils.code(password));
         User user = userRepository.findByUsernameAndPassword(username, password);
         return user;
+    }
+
+    @Override
+    public int addUser(User user) {
+        return userMapper.addUser(user);
     }
 }

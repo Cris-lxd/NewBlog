@@ -9,4 +9,11 @@ import org.springframework.stereotype.Service;
 public interface UserService {
 
     User checkUser(String username, String password);
+
+    /**
+     * 注册
+     * @param user
+     * @return
+     */
+    int addUser(User user);
 }
