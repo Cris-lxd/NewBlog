@@ -3,3 +3,4 @@ spring:
     mode: HTML        #配置为html3
   profiles:
     active: dev    #默认启动dev环境
+

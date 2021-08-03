@@ -120,6 +120,10 @@
         <div class="ui inverted divider"></div>
         <p class="m-text-thin m-text-spaced m-opacity-tiny">晋ICP备2020014603号</p>
         <p class="m-text-thin m-text-spaced m-opacity-tiny">copyright : © 2020 Designed by CRIS</p>
+        <p class="m-text-thin m-text-spaced m-opacity-tiny">晋ICP备2020014603号</p>
+        <div style="width:300px;margin:0 auto; ">
+            <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=14011002000192" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="../static" th:src="@{/images/beian.png}" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393; font-weight: 550">晋公网安备 14011002000192号</p></a>
+        </div>
     </div>
 
 </footer>
@@ -169,8 +173,14 @@
                     page: this.pageIndex,
                 },
                 success(data) {
-                    getMessage("success", "删除成功");
-                    getPage(this.pageIndex);
+                    if(data == '删除文件及记录成功'){
+                        getMessage("success", data);
+                    }else if(data == '删除失败'){
+                        getMessage("error", data);
+                    }else{
+                        getMessage("warning",data);
+                    }
+                    getPage(currentPage);
                 }
             })
         }
@@ -215,6 +225,7 @@
             '                <th>No</th>\n' +
             '                <th>Name</th>\n' +
             '                <th>Size</th>\n' +
+            '                <th>Date</th>\n' +
             '                <th class="center aligned  aligned">操作</th>\n' +
             '            </tr>\n' +
             '            </thead>\n' +
@@ -224,6 +235,7 @@
             html += '<td>' + data[i].num + '</td>';
             html += '<td>' + data[i].real_name + '</td>';
             html += '<td>' + data[i].size + '</td>';
+            html += '<td>' + data[i].date + '</td>';
             html += '<td class="center aligned selectable">\n' +
                 '            <div class="ui buttons">\n' +
                 '                <button class="ui teal basic button">';
@@ -277,12 +289,12 @@
         buildSendData: function (file) {
             var formData = new FormData(); // 发送格式为formData时
             formData.append('file', file.file)
-            // return formData;
+            return formData;
         },
         checkSuccessCode: function (xhr) {
             if (xhr.status == 200) { //这里判断仅仅用于测试，具体看项目
-                getMessage("success", "上传成功");
-                location.reload();
+                getMessage("success", xhr.response);
+                getPage(currentPage)
                 return true;
             } else {
                 return false;
@@ -319,6 +331,7 @@
 
     function clearAll() {
         $('#lin').val("");
+        getPage();
     }
 </script>
 </html>

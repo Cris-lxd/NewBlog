@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import javax.xml.crypto.Data;
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,6 +35,9 @@ import java.util.Map;
 @Controller
 @RequestMapping("/test")
 public class UploadTest {
+
+    private final static String LOCAL_PATH = "/Users/cris/Documents/Project/gitProjects/NewBlog/uploadFile/";
+    private final static String SERVER_PATH = "/usr/uploadFile/";
 
     @Autowired
     private FileMapper fileMapper;
@@ -72,7 +77,11 @@ public class UploadTest {
             if (filename == null || "".equals(filename)) {
                 attributes.addFlashAttribute("message", "无效文件");
             }
-            String path = "/usr/uploadFile/";
+
+            String macName = InetAddress.getLocalHost().toString();   //获取本机名字
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String path = "CrisdeMacBook-Pro.local/127.0.0.1".equals(macName) == true ? LOCAL_PATH : SERVER_PATH;
+//            String path = "/usr/uploadFile/";
             //String path ="E:/uploadFile/";
             File file1 = new File(path);
             if (!file1.exists()) {
@@ -142,10 +151,12 @@ public class UploadTest {
         if (num == 1) {
             attributes.addFlashAttribute("message", "上传成功，位于服务器 /usr/uploadFile文件夹下");
             //success = JSONObject.toJSON("上传成功，位于服务器 /usr/uploadFile文件夹下");
+            return "上传成功";
         }
+        return "上传失败";
         //return "redirect:/test/tofileUpload";
-        return "上传成功";
     }
+
 
     @RequestMapping("/download/{id}")
     public String download(HttpServletResponse response, @PathVariable("id") String id, RedirectAttributes attributes) {
@@ -198,25 +209,28 @@ public class UploadTest {
     }
 
     //删除
+    @ResponseBody
     @RequestMapping("/delete/{id}")
     public String delete(HttpServletResponse response, @PathVariable("id") String id, RedirectAttributes attributes) {
         Long lid = Long.valueOf(Integer.parseInt(id));
         String filename = fileMapper.selectById(lid);
         File file = new File("/usr/uploadFile/" + filename);
+        String result = null;
         if (file.exists()) {
             if (file.delete()) {
                 int num = fileMapper.DeleteById(lid);
                 if (num > 0) {
-                    attributes.addFlashAttribute("message", "删除文件及记录成功");
+                     result = "删除文件及记录成功";
                 }
             } else {
-                attributes.addFlashAttribute("message", "删除失败");
+                result = "删除失败";
             }
         } else {
-            attributes.addFlashAttribute("message", "该文件不存在，无法删除");
+            result = "该文件不存在，已删除记录";
             fileMapper.DeleteById(lid);
         }
-        return "redirect:/test/tofileUpload";
+//        return "redirect:/test/tofileUpload";
+        return result;
     }
 
     @ResponseBody

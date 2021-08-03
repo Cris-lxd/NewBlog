@@ -106,7 +106,8 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <compilerArguments>
-                        <bootclasspath>D:\jdk\jre\lib/rt.jar</bootclasspath>
+<!--                        <bootclasspath>D:\jdk\jre\lib/rt.jar</bootclasspath>-->
+                        <bootclasspath>/Library/Java/JavaVirtualMachines/jdk1.8.0_301.jdk/Contents/Home/jre/lib/rt.jar</bootclasspath>
                     </compilerArguments>
                 </configuration>
             </plugin>

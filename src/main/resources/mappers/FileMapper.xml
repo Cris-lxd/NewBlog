@@ -32,8 +32,7 @@
     </insert>
 
     <select id="selectAll" resultType="java.util.Map">
-        select *
-        from t_file
+        SELECT id,real_name,DATE_FORMAT(SUBSTR(`name`,1,8),'%Y-%m-%d') as date,size from t_file
     </select>
 
     <select id="selectById" parameterType="java.lang.Long" resultType="java.lang.String">

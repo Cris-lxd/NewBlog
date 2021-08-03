@@ -1,5 +1,11 @@
 document.write("<script language=javascript src='../js/message.js'></script>");
 
+/**
+ *   提示信息框
+ * @param type  (info,success,warning,error,loading,destroy)
+ * @param message
+ * @param timeOut
+ */
 function getMessage(type, message, timeOut) {
     switch (type) {
         case 'info':
@@ -43,7 +49,7 @@ function getMessage(type, message, timeOut) {
                 closeMsg();
             }, timeOut);
             break;
-        case 'destory':
+        case 'destroy':
             cocoMessage.config({
                 duration: 10000,
             });

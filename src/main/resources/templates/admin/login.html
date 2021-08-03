@@ -141,6 +141,7 @@
             return true;
         } else {
             getMessage("warning", "验证码输入有误");
+            $('.verificationCode').val("");
             changeCode();
             return false;
         }
