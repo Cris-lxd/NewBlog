@@ -51,9 +51,10 @@ public class BlogController {
      * */
     public String blogs(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
                         BlogQuery blog, Model model, @CurrentUser User user) {
-        model.addAttribute("types", typeService.listType());
-        model.addAttribute("page", blogService.listBlog(pageable, blog));    //查询page对象放到model模型里面
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("username",user.getUsername());
+        model.addAttribute("types", typeService.listType(user.getId()));
+        model.addAttribute("page", blogService.listBlog(pageable, blog,user.getId()));    //查询page对象放到model模型里面
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return LIST;
     }
 
@@ -62,10 +63,10 @@ public class BlogController {
      * */
     @PostMapping("/blogs/search")
     public String search(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-                         BlogQuery blog, Model model) {
+                         BlogQuery blog, Model model,@CurrentUser User user) {
 
-        model.addAttribute("page", blogService.listBlog(pageable, blog));    //查询page对象放到model模型里面
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("page", blogService.listBlog(pageable, blog,user.getId()));    //查询page对象放到model模型里面
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/blogs :: blogList";    //blogs页面下面的列表部分  ,对应blogs.html  83行
     }
 
@@ -73,31 +74,34 @@ public class BlogController {
      *   新增
      * */
     @GetMapping("/blogs/input")     //拿到默认值放入内容，对应blogs的新增按钮，渠道这个model一一赋值
-    public String input(Type type, Model model) {
-        model.addAttribute("types", typeService.listType());
-        model.addAttribute("tags", tagService.listTag());
+    public String input(Type type, Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
+        model.addAttribute("types", typeService.listType(user.getId()));
+        model.addAttribute("tags", tagService.listTag(user.getId()));
         model.addAttribute("blog", new Blog());
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return INPUT;
     }
 
     @GetMapping("/blogs/{id}/input")     //拿到默认值放入内容，对应blogs的新增按钮，渠道这个model一一赋值
-    public String editInput(@PathVariable Long id, Model model) {
-        model.addAttribute("types", typeService.listType());
-        model.addAttribute("tags", tagService.listTag());
+    public String editInput(@PathVariable Long id, Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
+        model.addAttribute("types", typeService.listType(user.getId()));
+        model.addAttribute("tags", tagService.listTag(user.getId()));
         model.addAttribute("firstPictures", "https://picsum.photos/seed/picsum/800/450");
         Blog blog = blogService.getBlog(id);
         blog.init();
         model.addAttribute("blog", blog);
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return INPUT;
     }
 
     @PostMapping("/blogs")
-    public String post(Blog blog, Tag tag, HttpSession session, RedirectAttributes attributes, Model model) {
+    public String post(Blog blog, Tag tag, HttpSession session, RedirectAttributes attributes, Model model,@CurrentUser User user) {
         blog.setUser((User) session.getAttribute("user"));
         blog.setType(typeService.getType(blog.getType().getId()));    //对应blogs的type.id,获取到对应的type值
         blog.setTags(tagService.listTag(blog.getTagIds()));       //对应标签
+        blog.setUser(user);
         Blog b;
 
         if (blog.getId() == null) {
@@ -114,7 +118,7 @@ public class BlogController {
         } else {
             attributes.addFlashAttribute("message", "操作成功");
         }
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return REDIRECT_LIST;
     }
 

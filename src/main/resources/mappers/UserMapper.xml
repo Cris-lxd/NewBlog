@@ -7,9 +7,9 @@
         insert into t_user(id,username,password,email,creat_time) values(#{id},#{username},#{password},#{email},#{creatTime})
     </insert>
 
-    <select id="findA" resultType="java.util.Map">
+    <select id="findA" resultType="java.util.Map" parameterType="java.lang.Long">
         select t2.name, count(t1.id) as count
-        from t_blog t1 left join t_type t2
+        from (select * from t_blog where user_id = #{userId}) t1 left join t_type t2
         on t1.type_id=t2.id
         group by t1.type_id
     </select>

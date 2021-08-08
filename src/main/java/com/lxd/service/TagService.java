@@ -17,13 +17,13 @@ public interface TagService {
 
     Tag getTagByName(String name);
 
-    Page<Tag> listTag(Pageable pageable);
+    Page<Tag> listTag(Pageable pageable,Long userId);
 
-    List<Tag> listTag();
+    List<Tag> listTag(Long userId);
 
     List<Tag> listTag(String ids);
 
-    List<Tag> listTagTop(Integer size);
+    List<Tag> listTagTop(Integer size,Long userId);
 
     Tag updateTag(Long id, Tag tag);
 

@@ -41,23 +41,25 @@ public class TypeServiceImpl implements TypeService {
 
     @Transactional     //放入事务中
     @Override
-    public Page<Type> listType(Pageable pageable) {                              //新增
-        return typeRepository.findAll(pageable);
+    public Page<Type> listType(Pageable pageable,Long userId) {                              //新增
+//        return typeRepository.findAll(pageable);
+        return typeRepository.findAllByUserIdAndPage(userId,pageable);
     }
 
     @Override
-    public List<Type> listTypeTop(Integer size) {
+    public List<Type> listTypeTop(Integer size,Long userId) { //
 //        Sort.by(Sort.Direction.DESC, "blogs.size");
 //        Pageable pageable=new PageRequest(0,size);   Springboot  2.0以下写法
         Sort sort = Sort.by(Sort.Order.desc("blogs.size"));
         Pageable pageable = PageRequest.of(0, size, sort);
 
-        return typeRepository.findTop(pageable);
+        return typeRepository.findTop(userId,pageable);
     }
 
     @Override
-    public List<Type> listType() {
-        return typeRepository.findAll();    //返回全部
+    public List<Type> listType(Long userId) {
+//        return typeRepository.findAll();    //返回全部
+        return typeRepository.findAllByUserId(userId);
     }
 
 

@@ -7,9 +7,11 @@ import com.lxd.dao.BlogRepository;
 import com.lxd.po.Blog;
 import com.lxd.po.Tag;
 import com.lxd.po.Type;
+import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.TagService;
 import com.lxd.service.TypeService;
+import com.lxd.util.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,14 +46,14 @@ public class ToController {
      * @return
      */
     @RequestMapping("/toTypes")
-    public String toTypes(Model model) {
-        List<Type> types = typeService.listType();
+    public String toTypes(Model model, @CurrentUser User user) {
+        List<Type> types = typeService.listType(user.getId());
         int countType = typeService.countType();
         List<Blog> blogByType = blogService.getBlogByType((long) 2);    //默认展示java类型
         model.addAttribute("types", types);
         model.addAttribute("countType", countType);
         model.addAttribute("blogByType", blogByType);
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "types";
     }
 
@@ -62,14 +64,14 @@ public class ToController {
      * @return
      */
     @RequestMapping("/toTags")
-    public String toTags(Model model) {
-        List<Tag> tags = tagService.listTag();
+    public String toTags(Model model,@CurrentUser User user) {
+        List<Tag> tags = tagService.listTag(user.getId());
         int countTag = tagService.countTag();
         List<Blog> blogByTag = blogService.getBlogByTag((long) 11);    //默认展示java类型
         model.addAttribute("tags", tags);
         model.addAttribute("countTag", countTag);
         model.addAttribute("blogByTag", blogByTag);
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "tags";
     }
 
@@ -81,7 +83,7 @@ public class ToController {
      * @throws ParseException
      */
     @RequestMapping("/toArchives")
-    public String toArchives(Model model) throws ParseException {
+    public String toArchives(Model model,@CurrentUser User user) throws ParseException {
         List<Blog> all = blogRepository.findAll();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<Blog> blogWithDate = new ArrayList<Blog>();
@@ -94,7 +96,7 @@ public class ToController {
         }
         model.addAttribute("blogNum", blogRepository.count());
         model.addAttribute("blogWithDate", blogWithDate);
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "archives";
     }
 
@@ -105,18 +107,18 @@ public class ToController {
      * @return
      */
     @RequestMapping("/toAbout")
-    public String toAbout(Model model) {
-        List<Tag> tags = tagService.listTag();
-        List<Type> types = typeService.listType();
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+    public String toAbout(Model model,@CurrentUser User user) {
+        List<Tag> tags = tagService.listTag(user.getId());
+        List<Type> types = typeService.listType(user.getId());
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         model.addAttribute("tags", tags);
         model.addAttribute("types", types);
         return "about";
     }
 
     @RequestMapping("/toIndex1")
-    public String toIndex1(Model model) {
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+    public String toIndex1(Model model,@CurrentUser User user) {
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "redirect:/";
     }
 
@@ -135,15 +137,15 @@ public class ToController {
      */
 
     @RequestMapping("/getBlogByType/{id}")
-    public String getBlogByType(@PathVariable Long id, Model model) {
+    public String getBlogByType(@PathVariable Long id, Model model,@CurrentUser User user) {
 
-        List<Type> types = typeService.listType();
+        List<Type> types = typeService.listType(user.getId());
         int countType = typeService.countType();
         List<Blog> blogByType = blogService.getBlogByType(id);
         model.addAttribute("types", types);
         model.addAttribute("countType", countType);
         model.addAttribute("blogByType", blogByType);
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "types";
     }
 
@@ -151,15 +153,15 @@ public class ToController {
      * 根据tagid获取blogs
      */
     @RequestMapping("/getBlogByTag/{id}")
-    public String getBlogByTag(@PathVariable Long id, Model model) {
+    public String getBlogByTag(@PathVariable Long id, Model model,@CurrentUser User user) {
 
-        List<Tag> tags = tagService.listTag();
+        List<Tag> tags = tagService.listTag(user.getId());
         int countTag = tagService.countTag();
         List<Blog> blogByTag = blogService.getBlogByTag(id);
         model.addAttribute("tags", tags);
         model.addAttribute("countTag", countTag);
         model.addAttribute("blogByTag", blogByTag);
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(3,user.getId()));
         return "tags";
     }
 }

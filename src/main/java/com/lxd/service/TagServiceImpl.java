@@ -48,13 +48,13 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public Page<Tag> listTag(Pageable pageable) {
-        return tagRepository.findAll(pageable);
+    public Page<Tag> listTag(Pageable pageable,Long userId) {
+        return tagRepository.findAllByUserIdAndPage(userId,pageable);
     }
 
     @Override
-    public List<Tag> listTag() {
-        return tagRepository.findAll();
+    public List<Tag> listTag(Long userId) {
+        return tagRepository.findAllByUserId(userId);
     }
 
     @Override
@@ -63,11 +63,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> listTagTop(Integer size) {
+    public List<Tag> listTagTop(Integer size,Long userId) {
         Sort sort = Sort.by(Sort.Order.desc("blogs.size"));
         Pageable pageable = PageRequest.of(0, size, sort);
 
-        return tagRepository.findTop(pageable);
+        return tagRepository.findTop(userId,pageable);
     }
 
     private List<Long> converTolist(String ids) {

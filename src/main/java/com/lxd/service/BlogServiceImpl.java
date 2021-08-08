@@ -53,7 +53,7 @@ public class BlogServiceImpl implements BlogService {
      * */
     @Transactional
     @Override
-    public Page<Blog> listBlog(Pageable pageable, BlogQuery blog) {
+    public Page<Blog> listBlog(Pageable pageable, BlogQuery blog,Long userId) {
 
         return blogRepository.findAll(new Specification<Blog>() {
 
@@ -87,6 +87,7 @@ public class BlogServiceImpl implements BlogService {
                 if (blog.isRecommend()) {
                     predicates.add(cb.equal(root.<Boolean>get("recommend"), blog.isRecommend()));
                 }
+                predicates.add(cb.equal(root.get("user").get("id"), userId));
                 cq.where(predicates.toArray(new Predicate[predicates.size()]));    //查询语句   ,转化为数组
                 return null;     //root为查询的对象，criteriaquery表示具体两个条件的表达式，相当于where后面的字段
             }
@@ -95,28 +96,29 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<Blog> listBlog(Pageable pageable) {
+//        return blogRepository.findTop(userId,pageable);
         return blogRepository.findAll(pageable);
     }
 
     @Override
-    public Page<Blog> listBlog(String querys, Pageable pageable) {
-        return blogRepository.findByQuerys(querys, pageable);
+    public Page<Blog> listBlog(String querys, Pageable pageable,Long userId) {
+        return blogRepository.findByQuerys(querys, pageable,userId);
     }
 
     @Override
-    public List<Blog> listRecommendBlogTop1(Integer size) {
+    public Page<Blog> listRecommendBlogTop1(Integer size,Long userId) {
         Sort sort = Sort.by(Sort.Order.desc("updateTime"));
         Pageable pageable = PageRequest.of(0, size, sort);
 
-        return blogRepository.findTop(pageable);
+        return blogRepository.findTop(userId,pageable);
     }
 
     @Override
-    public List<Blog> listRecommendBlogTop(Integer size) {
+    public List<Blog> listRecommendBlogTop(Integer size,Long userId) {
         Sort sort = Sort.by(Sort.Order.desc("createTime"));
         Pageable pageable = PageRequest.of(0, size, sort);
 
-        return blogRepository.findTop1(pageable);
+        return blogRepository.findTop1(userId,pageable);
     }
 
     /*

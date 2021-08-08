@@ -16,18 +16,17 @@
 <nav class="ui inverted attached segment m-padding-tb-min m-shadow-small">    <!--inverted反转-->
     <div class="ui container">
         <div class="ui inverted secondary stackable menu">
-            <h2 class="ui teal header m-lxd-blog ">管理后台</h2>
-            <a href="#" class="active m-item item m-mobile-hide" th:href="@{/admin/blogs}"><i
-                    class="home icon"></i>博客</a>
+            <h2 class="ui teal header m-lxd-blog">管理后台</h2>
+            <a href="#" class="m-item item m-mobile-hide" th:href="@{/admin/blogs}"><i class="home icon"></i>博客</a>
             <a href="#" class="m-item item m-mobile-hide" th:href="@{/admin/types}"><i class="idea icon"></i></icon>
                 分类</a>
             <a href="#" class="m-item item m-mobile-hide" th:href="@{/admin/tags}"><i class="tags icon"></i>标签</a>
             <!--right item表示靠右-->
             <div class="right m-item m-mobile-hide menu">
                 <div class="ui dropdown item">
-                    <div class="text">
+                    <div class="text" >
                         <img class="ui avatar image" src="https://picsum.photos/seed/picsum/100/100">
-                        Cris
+                        <p style="display: inline" th:text="${username}"></p>
                     </div>
                     <i class="dropdown icon"></i>
                     <div class="menu">

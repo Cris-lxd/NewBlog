@@ -4,10 +4,12 @@ import com.lxd.dao.TypeRepository;
 import com.lxd.mapper.UserMapper;
 import com.lxd.po.Blog;
 import com.lxd.po.Comment;
+import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.CommentService;
 import com.lxd.service.TagService;
 import com.lxd.service.TypeService;
+import com.lxd.util.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 //import	java.beans.WeakIdentityMap.Entry;
@@ -40,20 +43,28 @@ public class indexController {
 
     @GetMapping("/")   //请求根路径    //路径变量传递两个参数
     public String index(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-                        Model model) {     //PathVariable  路径变量  即获取url的参数
+                        Model model, HttpSession session) {     //PathVariable  路径变量  即获取url的参数
+        User user2 = (User) session.getAttribute("user");
+        if(user2 == null){
+            User user1 = new User();
+            user1.setId(1L);
+            session.setAttribute("user",user1);
+        }
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("username",user.getUsername());
         model.addAttribute("page", blogService.listBlog(pageable));
-        model.addAttribute("types", typeService.listTypeTop(6));   //指定显示的大小   对应index的th:each="type : ${types}"
-        model.addAttribute("tags", tagService.listTagTop(10));
-        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop1(5));  //获得推荐的，修改排序
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));  //获得最新的，时间排序
+        model.addAttribute("types", typeService.listTypeTop(6,user.getId()));   //指定显示的大小   对应index的th:each="type : ${types}"
+        model.addAttribute("tags", tagService.listTagTop(10,user.getId()));
+        model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop1(5,user.getId()));  //获得推荐的，修改排序
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));  //获得最新的，时间排序
         return "index";   //若无异常。则返回到index页面
     }
 
     @PostMapping("/search")
     public String search(@PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
                          @RequestParam String query,
-                         Model model) {
-        model.addAttribute("page", blogService.listBlog("%" + query + "%", pageable));
+                         Model model,@CurrentUser User user) {
+        model.addAttribute("page", blogService.listBlog("%" + query + "%", pageable,user.getId()));
         model.addAttribute("query", query);   //将query再返回到查询的地方
         return "search";
 
@@ -89,8 +100,8 @@ public class indexController {
 
     @RequestMapping("/echarts")
     @ResponseBody
-    public List<Map<String, String>> echarts(HttpServletRequest request) {
-        List<Map<String, String>> a = userMapper.findA();
+    public List<Map<String, String>> echarts(HttpServletRequest request,@CurrentUser User user) {
+        List<Map<String, String>> a = userMapper.findA(user.getId());
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for (int i = 0; i < a.size(); i++) {
             Map<String, String> map = new LinkedHashMap<String, String>();

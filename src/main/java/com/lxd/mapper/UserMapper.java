@@ -18,7 +18,7 @@ public interface UserMapper {
      * @return
      */
     @MapKey("id")
-    public List<Map<String, String>> findA();
+    public List<Map<String, String>> findA(Long userId);
 
     int addUser(User user);
 }

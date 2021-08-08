@@ -14,15 +14,39 @@ public interface BlogService {
 
     Blog getBlog(Long id);    //根据主键查询blog
 
-    Page<Blog> listBlog(Pageable pageable, BlogQuery blog);    //blog对象里面的一些属性，封装传递过来
+    Page<Blog> listBlog(Pageable pageable, BlogQuery blog,Long userId);    //blog对象里面的一些属性，封装传递过来
 
+    /**
+     * 根据用户查询博客
+     * @param pageable
+     * @return
+     */
     Page<Blog> listBlog(Pageable pageable);
 
-    Page<Blog> listBlog(String querys, Pageable pageable);
+    /**
+     * 根据用户模糊查询博客
+     * @param querys
+     * @param pageable
+     * @param userId
+     * @return
+     */
+    Page<Blog> listBlog(String querys, Pageable pageable,Long userId); //
 
-    List<Blog> listRecommendBlogTop1(Integer size);    //推荐的博客列表
+    /**
+     * 返回推荐的及博主本人的博客
+     * @param size
+     * @param userId
+     * @return
+     */
+    Page<Blog> listRecommendBlogTop1(Integer size,Long userId);    //推荐的博客列表
 
-    List<Blog> listRecommendBlogTop(Integer size);    //最新的博客列表
+    /**
+     * 获取博主本人博客
+     * @param size
+     * @param userId
+     * @return
+     */
+    List<Blog> listRecommendBlogTop(Integer size,Long userId);    //最新的博客列表
 
     Blog saveBlog(Blog blog);   //新增一个blog，传递过来一个blog对象
 

@@ -19,6 +19,8 @@ public class Type {
     @NotBlank(message = "不能为空")    //不能允许为空
     private String name;
 
+    private Long userId;
+
     @OneToMany(mappedBy = "type")    //一对多的一端
     private List<Blog> blogs = new ArrayList<>();
 
@@ -49,11 +51,21 @@ public class Type {
         this.blogs = blogs;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "Type{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", userId=" + userId +
+                ", blogs=" + blogs +
                 '}';
     }
 }

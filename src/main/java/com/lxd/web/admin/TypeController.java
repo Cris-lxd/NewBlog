@@ -2,8 +2,10 @@ package com.lxd.web.admin;
 
 import com.lxd.po.Blog;
 import com.lxd.po.Type;
+import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.TypeService;
+import com.lxd.util.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,30 +40,34 @@ public class TypeController {
      * */
     @GetMapping("/types")
     public String types(@PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC)
-                                Pageable pageable, Model model) {     //model前端页面展示模型
-
-        model.addAttribute("page", typeService.listType(pageable));   //页面的分页处理   typeService.listType(pageable)里面的对象是json格式
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+                                Pageable pageable, Model model, @CurrentUser User user) {     //model前端页面展示模型
+        model.addAttribute("username",user.getUsername());
+        model.addAttribute("page", typeService.listType(pageable,user.getId()));   //页面的分页处理   typeService.listType(pageable)里面的对象是json格式
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/types";
     }
 
     @GetMapping("/types/{id}/input")          //为了将原有的内容提取到inp框中
-    public String editInput(@PathVariable Long id, Model model) {
+    public String editInput(@PathVariable Long id, Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
         model.addAttribute("type", typeService.getType(id));
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/types-input";
     }
 
     @GetMapping("/types/input")     //前端页面调用这个方法的写法   th:href="@{/admin/types/input}"
-    public String input(Model model) {
+    public String input(Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
         model.addAttribute("type", new Type());  //前端types-input需要拿到type值   th:object="${type}"
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/types-input";
     }
 
     @PostMapping("/types")    //前段调用方式 method="post" th:action="@{/admin/types}"          //新增方法
-    public String post(@Valid Type type, BindingResult result, RedirectAttributes attributes, Model model) {     //@Valid代表要校验,BindingResult result接受结果
+    public String post(@Valid Type type, BindingResult result, RedirectAttributes attributes, Model model,@CurrentUser User user) {     //@Valid代表要校验,BindingResult result接受结果
         Type type1 = typeService.getTypeByName(type.getName());
+        Long userId = user.getId();
+        type.setUserId(userId);
         if (type1 != null) {
             result.rejectValue("name", "nameError", "不能重复添加");      //自定义添加返回的内容
         }
@@ -75,7 +81,7 @@ public class TypeController {
         } else {
             attributes.addFlashAttribute("message", "新增成功");
         }
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "redirect:/admin/types";
     }
 
@@ -83,8 +89,9 @@ public class TypeController {
     public String editPost(@Valid Type type, BindingResult result,
                            @PathVariable Long id,
                            Model model,
-                           RedirectAttributes attributes) {     //@Valid代表要校验,BindingResult result接受结果
+                           RedirectAttributes attributes,@CurrentUser User user) {     //@Valid代表要校验,BindingResult result接受结果
         Type type1 = typeService.getTypeByName(type.getName());
+        type.setUserId(user.getId());
         if (type1 != null) {
             result.rejectValue("name", "nameError", "不能重复添加");      //自定义添加返回的内容
         }
@@ -98,7 +105,7 @@ public class TypeController {
         } else {
             attributes.addFlashAttribute("message", "更新成功");
         }
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "redirect:/admin/types";
     }
 

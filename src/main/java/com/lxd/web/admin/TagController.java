@@ -3,8 +3,10 @@ package com.lxd.web.admin;
 import com.lxd.po.Blog;
 import com.lxd.po.Tag;
 import com.lxd.po.Type;
+import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.TagService;
+import com.lxd.util.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,9 +41,10 @@ public class TagController {
      * */
     @GetMapping("/tags")
     public String tags(@PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC)
-                               Pageable pageable, Model model) {
-        model.addAttribute("page", tagService.listTag(pageable));
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+                               Pageable pageable, Model model, @CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
+        model.addAttribute("page", tagService.listTag(pageable,user.getId()));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/tags";
     }
 
@@ -50,15 +53,17 @@ public class TagController {
      *    新增方法
      * */
     @GetMapping("/tags/input")     //前端页面调用这个方法的写法   th:href="@{/admin/types/input}"
-    public String input(Model model) {
+    public String input(Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
         model.addAttribute("tag", new Tag());  //前端types-input需要拿到type值   th:object="${type}"
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/tags-input";
     }
 
     @PostMapping("/tags")
-    public String postpost(@Valid Tag tag, BindingResult result, RedirectAttributes attributes, Model model) {
+    public String postpost(@Valid Tag tag, BindingResult result, RedirectAttributes attributes, Model model,@CurrentUser User user) {
         Tag tag1 = tagService.getTagByName(tag.getName());    //如果有名字就能获取到
+        tag.setUserId(user.getId());
         if (tag1 != null) {
             result.rejectValue("name", "nameError", "不能重复添加");
         }
@@ -72,7 +77,7 @@ public class TagController {
             attributes.addFlashAttribute("message", "新增成功");
 
         }
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "redirect:/admin/tags";
     }
 
@@ -81,15 +86,17 @@ public class TagController {
      *    更新方法
      * */
     @GetMapping("/tags/{id}/input")          //为了将原有的内容提取到inp框中
-    public String editInput(@PathVariable Long id, Model model) {
+    public String editInput(@PathVariable Long id, Model model,@CurrentUser User user) {
+        model.addAttribute("username",user.getUsername());
         model.addAttribute("tag", tagService.getTag(id));
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "admin/tags-input";
     }
 
     @PostMapping("/tags{id}")
-    public String editTags(@Valid Tag tag, BindingResult result, @PathVariable Long id, RedirectAttributes attributes, Model model) {
+    public String editTags(@Valid Tag tag, BindingResult result, @PathVariable Long id, RedirectAttributes attributes, Model model,@CurrentUser User user) {
         Tag tag1 = tagService.getTagByName(tag.getName());
+        tag.setUserId(user.getId());
         if (tag1 != null) {
             result.rejectValue("name", "nameError", "不能重复添加");
         }
@@ -103,7 +110,7 @@ public class TagController {
             attributes.addFlashAttribute("message", "更新成功");
 
         }
-        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+        model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
         return "redirect:/admin/tags";
 
     }

@@ -3,6 +3,7 @@ package com.lxd.web.admin;
 import com.lxd.po.User;
 import com.lxd.service.BlogService;
 import com.lxd.service.UserService;
+import com.lxd.util.CurrentUser;
 import com.lxd.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,12 +45,13 @@ public class LoginController {
                         HttpSession session,
                         Model model,
                         RedirectAttributes attributes) {    //拿到session
-        User user = userService.checkUser(username, password);    //调用判断
+        User user = userService.checkUser(username, MD5Utils.code(password));    //调用判断
         if (user != null) {
             user.setPassword(null);
             session.setAttribute("user", user);
             //return "/admin/index";
-            model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3));
+            model.addAttribute("recommendBlogs1", blogService.listRecommendBlogTop(3,user.getId()));
+            model.addAttribute("username",username);
             return "admin/index";
         } else {
             attributes.addFlashAttribute("message", "用户名和密码错误");
@@ -67,8 +69,9 @@ public class LoginController {
     }
 
     @RequestMapping("/toAdmin")
-    public String toAdmin(HttpServletRequest request) {
+    public String toAdmin(HttpServletRequest request,HttpSession session) {
         request.getSession().removeAttribute("user");
+        Object user = session.getAttribute("user");
         return "admin/login";
     }
 

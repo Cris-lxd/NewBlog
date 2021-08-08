@@ -20,11 +20,11 @@ public interface TypeService {
      * Pageable 是Spring Data库中定义的一个接口，用于构造翻页查询，是所有分页相关信息的一个抽象，
      * 通过该接口，我们可以得到和分页相关所有信息（例如pageNumber、pageSize等），这样，Jpa就能够通过pageable参数来得到一个带分页信息的Sql语句。
      * */
-    Page<Type> listType(Pageable pageable);
+    Page<Type> listType(Pageable pageable,Long userid);
 
-    List<Type> listTypeTop(Integer size);
+    List<Type> listTypeTop(Integer size,Long userId);
 
-    List<Type> listType();
+    List<Type> listType(Long userId);
 
     Type updateType(Long id, Type type);
 
