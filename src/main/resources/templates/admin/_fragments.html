@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="../../static/lib/editormd-backup/css/editormd.min.css"
           th:href="@{/lib/editormd/css/editormd.min.css}">
     <link rel="shortcut icon" href="../../static/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon"/>
+    <link rel="stylesheet" href="../static/lib/layui/layui.css" th:href="@{/lib/layui/layui.css}">
+    <link rel="stylesheet" href="../static/lib/layui/laydate.css" th:href="@{/lib/layui/laydate.css}">
+    <link rel="stylesheet" href="../static/lib/layui/code.css" th:href="@{/lib/layui/code.css}">
+    <link rel="stylesheet" href="../static/lib/layui/layer.css" th:href="@{/lib/layui/layer.css}">
+    <link rel="stylesheet/less" href="../static/css/myBlogs.less" th:href="@{/css/myBlogs.less}">
 </head>
 <body>
 <nav th:fragment="menu(n)" class="ui inverted attached segment m-padding-tb-min m-shadow-small">    <!--inverted反转-->
@@ -21,6 +26,8 @@
                     class="idea icon"></i></icon>分类</a>
             <a href="#" th:href="@{/admin/tags}" class="m-item item m-mobile-hide"
                th:classappend="${n==3} ? 'active'"><i class="tags icon"></i>标签</a>
+            <a href="#" th:href="@{/admin/myBlogs}" class="m-item item m-mobile-hide"
+               th:classappend="${n==3} ? 'active'"><i class="book icon"></i>我的博客</a>
             <!--right item表示靠右-->
             <div class="right m-item m-mobile-hide menu">
                 <div class="ui dropdown item">
@@ -94,8 +101,10 @@
     <script src="../static/lib/editormd/editormd.js" th:src="@{/lib/editormd/editormd.js}"></script>
     <script src="../static/js/pagination.js" th:src="@{/js/pagination.js}"></script>
     <script src="../static/lib/easyupload/easyUpload.js" th:src="@{/lib/easyupload/easyUpload.js}"></script>
+    <script src="../static/lib/layui/layui.js" th:src="@{/lib/layui/layui.js}"></script>
     <script src="https://www.jq22.com/jquery/bootstrap-4.2.1.js"></script>
     <script src="../static/js/lin_search.js" th:src="@{/js/lin_search.js}"></script>
+    <script type="text/javascript" src='http://cdnjs.cloudflare.com/ajax/libs/less.js/3.11.1/less.min.js'></script>
 </div>
 </body>
 

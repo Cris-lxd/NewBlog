@@ -33,9 +33,9 @@ public class WebConfig implements WebMvcConfigurer {      //采用JavaBean的形
         /*ApplicationHome home = new ApplicationHome(getClass());
         File sysfile = home.getSource();
         String jarPath = sysfile.getParentFile().toString();*/
-        String path = "/usr/img/";
+        String path = "/usr/images/";
         String path1 = "path";//System.getProperty("user.dir") + "\\src\\main\\webapp\\uptextimg\\";
-        registry.addResourceHandler("/static/img/**").addResourceLocations("file:" + path);
+        registry.addResourceHandler("/static/images/**").addResourceLocations("file:" + path);
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
